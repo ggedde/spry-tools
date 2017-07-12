@@ -170,7 +170,7 @@ class SpryTools {
 
 	public function displayWebTools()
 	{
-		if(!$this->authenticate())
+		if(!$this->authenticateWebTools())
 		{
 			return;
 		}
@@ -183,7 +183,7 @@ class SpryTools {
 			{
 				if(!empty($_POST['hash']))
 				{
-					die(SpryTools::get_hash($_POST['hash']));
+					die(self::get_hash($_POST['hash']));
 				}
 			}
 
@@ -191,11 +191,11 @@ class SpryTools {
 			{
 				if(!empty($_POST['test']) && $_POST['test'] === 'All Tests')
 				{
-					Spry::send_response(SpryTools::test());
+					Spry::send_response(self::test());
 					exit;
 				}
 
-				Spry::send_response(SpryTools::test($_POST['test']));
+				Spry::send_response(self::test($_POST['test']));
 				exit;
 			}
 
@@ -203,7 +203,7 @@ class SpryTools {
 			{
 				$destructive = !empty($_POST['destructive']) ? true : false;
 				$dryrun = !empty($_POST['dryrun']) ? true : false;
-				$results = SpryTools::db_migrate(['destructive' => $destructive, 'dryrun' => $dryrun]);
+				$results = self::db_migrate(['destructive' => $destructive, 'dryrun' => $dryrun]);
 				Spry::send_response($results);
 				exit;
 			}
@@ -250,7 +250,7 @@ class SpryTools {
 
 		foreach (Spry::config()->tests as $path => $test)
 		{
-			$requests[ $path . ($test['title'] ? ' - '.$test['title'] : '')] = json_encode($test['params']);
+			$requests[ $path . (!empty($test['title']) ? ' - '.$test['title'] : '')] = json_encode($test['params']);
 		}
 
 		?>
