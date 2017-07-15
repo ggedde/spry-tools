@@ -261,15 +261,6 @@ class SpryTools {
 			header("Location: ".$_SERVER['PHP_SELF']);
 		}
 
-		// $requests = [];
-        //
-		// $requests[] = ['route' => 'all tests', 'title'"Runs All Tests at Once"';
-        //
-		// foreach (Spry::config()->tests as $path => $test)
-		// {
-		// 	$requests[ $path . (!empty($test['title']) ? ' - '.$test['title'] : '')] = json_encode($test['params']);
-		// }
-
 		?>
 
 		<style>
@@ -828,17 +819,6 @@ class SpryTools {
                 else
                 {
                     track_submitted_tests(test_id);
-
-                    // var route = '<?php echo Spry::config()->endpoint;?>' + tests_data[test_id]['route'];
-                    //
-                    // console.log('Sending Test to: ' + route);
-                    //
-    				// // $.post('<?php echo $_SERVER['REQUEST_URI'];?>', { ajax: 'api_request', test: $('#api-request-test').val(), request: $('#api-request-data').val() }, function(response){
-                    // $.post(route, $('#api-request-data').val(), function(response){
-                    //
-                    //     update_test_response(response);
-                    //
-    				// });
                 }
 			});
 
