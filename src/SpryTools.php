@@ -32,18 +32,12 @@ class SpryTools {
 
     public static function db_migrate($args=[])
 	{
-		$logs = [];
-
         if(empty(Spry::config()))
         {
             return Spry::results(5001, null);
         }
 
-		if(!empty(Spry::config()->db))
-		{
-			$db = new SpryDB(Spry::config()->db);
-			$logs = $db->migrate($args);
-		}
+		$logs = Spry::db()->migrate($args);
 
 		return Spry::results(30, $logs);
 	}
