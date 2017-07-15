@@ -36,6 +36,16 @@ class SpryTools {
         {
             return Spry::results(5001, null);
         }
+		
+		if(empty(Spry::config()->db['username']) || empty(Spry::config()->db['database_name']))
+        {
+            return Spry::results(5032, null);
+        }
+
+        if(empty(Spry::config()->db['provider']) || !class_exists(Spry::config()->db['provider']))
+        {
+            return Spry::results(5033, null);
+        }
 
 		$logs = Spry::db()->migrate($args);
 
