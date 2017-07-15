@@ -48,7 +48,7 @@ class SpryTools {
 		return Spry::results(30, $logs);
 	}
 
-    public static function test($requested_test_name='', $response='')
+    public static function test($test='')
 	{
 		if(empty(Spry::config()->tests))
 		{
@@ -57,76 +57,53 @@ class SpryTools {
 
 		$response_code = 2050;
 
-		$last_response_body = null;
-		$last_response_body_id = null;
-
         $result = [];
 
-        if($requested_test_name && !isset(Spry::config()->tests[$requested_test_name]))
+        if(is_string($test))
         {
-            $response_code = 5053;
-        }
-
-		foreach (Spry::config()->tests as $test_name => $test)
-		{
-            // Skip this test if a Test Name was Requested and does not match this Test.
-            if($requested_test_name && $requested_test_name != $test_name)
+            if(!isset(Spry::config()->tests[$test]))
             {
-                continue;
+                return Spry::results(5053, null);
             }
 
-			$result[$test_name] = [
-                'status' => 'Passed',
-                'expect' => [],
-                'result' => [],
-            ];
+            $test = Spry::config()->tests[$test];
+        }
 
-			foreach ($test['params'] as $param_key => $param)
-			{
-				if($param === '{last_response_body}')
+		$result = [
+            'status' => 'Passed',
+            'expect' => [],
+            'result' => [],
+        ];
+
+		$response = self::get_api_response(json_encode($test['params']), Spry::config()->endpoint.$test['route']);
+		$response = json_decode($response, true);
+
+        $result['full_response'] = $response;
+
+		if(!empty($test['expect']) && is_array($test['expect']))
+		{
+			$result['result'] = [];
+
+            if(empty($test['expect']))
+            {
+                $result['status'] = 'Failed';
+                $response_code = 5050;
+            }
+            else
+            {
+                $result['expect'] = $test['expect'];
+
+				foreach ($test['expect'] as $expect_key => $expect)
 				{
-					$test['params'][$param_key] = $last_response_body;
+					$result['result'][$expect_key] = $response[$expect_key];
+
+					if(empty($response[$expect_key]) || $response[$expect_key] !== $expect)
+					{
+						$result['status'] = 'Failed';
+						$response_code = 5050;
+					}
 				}
-
-				if($param === '{last_response_body_id}')
-				{
-					$test['params'][$param_key] = $last_response_body_id;
-				}
-			}
-
-			$response = self::get_api_response(json_encode($test['params']), Spry::config()->endpoint.$test['route']);
-			$response = json_decode($response, true);
-
-            $result[$test_name]['full_response'] = $response;
-
-			if(!empty($test['expect']) && is_array($test['expect']))
-			{
-				$result[$test_name]['result'] = [];
-
-                if(empty($test['expect']))
-                {
-                    $result[$test_name]['status'] = 'Failed';
-                    $response_code = 5050;
-                }
-                else
-                {
-                    $result[$test_name]['expect'] = $test['expect'];
-
-    				foreach ($test['expect'] as $expect_key => $expect)
-    				{
-    					$result[$test_name]['result'][$expect_key] = $response[$expect_key];
-
-    					if(empty($response[$expect_key]) || $response[$expect_key] !== $expect)
-    					{
-    						$result[$test_name]['status'] = 'Failed';
-    						$response_code = 5050;
-    					}
-    				}
-                }
-			}
-
-			$last_response_body = (!empty($response['body']) ? $response['body'] : null);
-			$last_response_body_id = (!empty($response['body']['id']) ? $response['body']['id'] : null);
+            }
 		}
 
 		return Spry::results($response_code, $result);
@@ -187,7 +164,7 @@ class SpryTools {
 				}
 			}
 
-            if($ajax === 'api_all_tests_request')
+            if($ajax === 'build_tests_response')
 			{
 				if(!empty($_POST['response_code']) && !empty($_POST['results']))
 				{
@@ -196,25 +173,10 @@ class SpryTools {
 				}
             }
 
-			if($ajax === 'api_request')
+            if($ajax === 'get_tests')
 			{
-				if(!empty($_POST['test']) && $_POST['test'] === 'All Tests')
-				{
-					Spry::send_response(self::test());
-					exit;
-				}
-
-                $test = $_POST['test'];
-
-                $test_pos = strpos($test, ' - ');
-
-                if($test_pos !== false)
-                {
-                    $test = substr($test, 0, $test_pos);
-                }
-
-				Spry::send_response(self::test($test));
-				exit;
+                Spry::send_response(Spry::results(2000, Spry::config()->tests));
+                exit;
 			}
 
 			if($ajax === 'db_migrate')
@@ -570,9 +532,6 @@ class SpryTools {
 		!function(a,b){function r(a){return a.replace(/([A-Z])/g,"-$1").toLowerCase()}function s(a){return d?d+a:a.toLowerCase()}var d,h,i,j,k,l,m,n,o,p,c="",e={Webkit:"webkit",Moz:"",O:"o"},f=document.createElement("div"),g=/^((translate|rotate|scale)(X|Y|Z|3d)?|matrix(3d)?|perspective|skew(X|Y)?)$/i,q={};f.style.transform===b&&a.each(e,function(a,e){if(f.style[a+"TransitionProperty"]!==b)return c="-"+a.toLowerCase()+"-",d=e,!1}),h=c+"transform",q[i=c+"transition-property"]=q[j=c+"transition-duration"]=q[l=c+"transition-delay"]=q[k=c+"transition-timing-function"]=q[m=c+"animation-name"]=q[n=c+"animation-duration"]=q[p=c+"animation-delay"]=q[o=c+"animation-timing-function"]="",a.fx={off:d===b&&f.style.transitionProperty===b,speeds:{_default:400,fast:200,slow:600},cssPrefix:c,transitionEnd:s("TransitionEnd"),animationEnd:s("AnimationEnd")},a.fn.animate=function(c,d,e,f,g){return a.isFunction(d)&&(f=d,e=b,d=b),a.isFunction(e)&&(f=e,e=b),a.isPlainObject(d)&&(e=d.easing,f=d.complete,g=d.delay,d=d.duration),d&&(d=("number"==typeof d?d:a.fx.speeds[d]||a.fx.speeds._default)/1e3),g&&(g=parseFloat(g)/1e3),this.anim(c,d,e,f,g)},a.fn.anim=function(c,d,e,f,s){var t,v,y,u={},w="",x=this,z=a.fx.transitionEnd,A=!1;if(d===b&&(d=a.fx.speeds._default/1e3),s===b&&(s=0),a.fx.off&&(d=0),"string"==typeof c)u[m]=c,u[n]=d+"s",u[p]=s+"s",u[o]=e||"linear",z=a.fx.animationEnd;else{v=[];for(t in c)g.test(t)?w+=t+"("+c[t]+") ":(u[t]=c[t],v.push(r(t)));w&&(u[h]=w,v.push(h)),d>0&&"object"==typeof c&&(u[i]=v.join(", "),u[j]=d+"s",u[l]=s+"s",u[k]=e||"linear")}return y=function(b){if("undefined"!=typeof b){if(b.target!==b.currentTarget)return;a(b.target).unbind(z,y)}else a(this).unbind(z,y);A=!0,a(this).css(q),f&&f.call(this)},d>0&&(this.bind(z,y),setTimeout(function(){A||y.call(x)},1e3*(d+s)+25)),this.size()&&this.get(0).clientLeft,this.css(u),d<=0&&setTimeout(function(){x.each(function(){y.call(this)})},0),this},f=null}(Zepto);
 		!function(a,b){function h(c,d,e,f,g){"function"!=typeof d||g||(g=d,d=b);var h={opacity:e};return f&&(h.scale=f,c.css(a.fx.cssPrefix+"transform-origin","0 0")),c.animate(h,d,null,g)}function i(b,c,d,e){return h(b,c,0,d,function(){f.call(a(this)),e&&e.call(this)})}var c=window.document,e=(c.documentElement,a.fn.show),f=a.fn.hide,g=a.fn.toggle;a.fn.show=function(a,c){return e.call(this),a===b?a=0:this.css("opacity",0),h(this,a,1,"1,1",c)},a.fn.hide=function(a,c){return a===b?f.call(this):i(this,a,"0,0",c)},a.fn.toggle=function(c,d){return c===b||"boolean"==typeof c?g.call(this,c):this.each(function(){var b=a(this);b["none"==b.css("display")?"show":"hide"](c,d)})},a.fn.fadeTo=function(a,b,c){return h(this,a,b,null,c)},a.fn.fadeIn=function(a,b){var c=this.css("opacity");return c>0?this.css("opacity",0):c=1,e.call(this).fadeTo(a,c,b)},a.fn.fadeOut=function(a,b){return i(this,a,null,b)},a.fn.fadeToggle=function(b,c){return this.each(function(){var d=a(this);d[0==d.css("opacity")||"none"==d.css("display")?"fadeIn":"fadeOut"](b,c)})}}(Zepto);
 
-
-
-
 		var tests_data = JSON.parse('<?php echo json_encode(Spry::config()->tests);?>');
 
         var submitted_tests = {
@@ -720,7 +679,7 @@ class SpryTools {
             }
 
             var data = {
-                ajax: 'api_all_tests_request',
+                ajax: 'build_tests_response',
                 'response_code': response_code,
                 'results': submitted_tests['completed']
             };
@@ -808,18 +767,29 @@ class SpryTools {
 				$('#api-request-response textarea').val('');
 				$('#api-request-legend .loader').fadeIn(100);
 
-                var test_id = $('#api-request-test').val();
-
                 submitted_tests['completed'] = {};
 
-                if(test_id == 'All Tests')
-                {
-                    track_submitted_tests('All');
-                }
-                else
-                {
-                    track_submitted_tests(test_id);
-                }
+                $.post('<?php echo $_SERVER['REQUEST_URI'];?>', { ajax: 'get_tests' }, function(response){
+                    if(response)
+                    {
+                        data = JSON.parse(response);
+                        if(typeof(data.body) !== 'undefined')
+                        {
+                            tests_data = data.body;
+
+                            var test_id = $('#api-request-test').val();
+
+                            if(test_id == 'All Tests')
+                            {
+                                track_submitted_tests('All');
+                            }
+                            else
+                            {
+                                track_submitted_tests(test_id);
+                            }
+                        }
+                    }
+                });
 			});
 
 			$('#db-migrate-submit').on('click', function(){
