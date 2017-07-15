@@ -13,7 +13,7 @@
         }
     ],
     "minimum-stability": "dev",
-    "prefer-stable" : true,
+    "prefer-stable" : false,
     "autoload": {
         "psr-4": {
             "Spry\\SpryProvider\\": "src/"
