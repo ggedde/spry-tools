@@ -12,6 +12,8 @@
             "email": "ggeddedev@gmail.com"
         }
     ],
+    "minimum-stability": "dev",
+    "prefer-stable" : true,
     "autoload": {
         "psr-4": {
             "Spry\\SpryProvider\\": "src/"
