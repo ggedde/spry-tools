@@ -194,36 +194,36 @@ class SpryTools {
 
 			if($ajax === 'php_logs')
 			{
-				die((file_exists(Spry::config()->php_log_file) ? file_get_contents(Spry::config()->php_log_file) : ''));
+				die((file_exists(Spry::config()->log_php_file) ? file_get_contents(Spry::config()->log_php_file) : ''));
 			}
 
 			if($ajax === 'api_logs')
 			{
-				die((file_exists(Spry::config()->api_log_file) ? file_get_contents(Spry::config()->api_log_file) : ''));
+				die((file_exists(Spry::config()->log_api_file) ? file_get_contents(Spry::config()->log_api_file) : ''));
 			}
 
 			if($ajax === 'clear_php_logs')
 			{
-				if(file_exists(Spry::config()->php_log_file))
+				if(file_exists(Spry::config()->log_php_file))
 				{
-					file_put_contents(Spry::config()->php_log_file, '');
+					file_put_contents(Spry::config()->log_php_file, '');
 				}
 			}
 
 			if($ajax === 'clear_api_logs')
 			{
-				if(file_exists(Spry::config()->api_log_file))
+				if(file_exists(Spry::config()->log_api_file))
 				{
-					file_put_contents(Spry::config()->api_log_file, '');
+					file_put_contents(Spry::config()->log_api_file, '');
 				}
 			}
 
 			exit;
 		}
 
-		if(!empty($_GET['clear_log']) && !empty(Spry::config()->php_log_file))
+		if(!empty($_GET['clear_log']) && !empty(Spry::config()->log_php_file))
 		{
-			file_put_contents(Spry::config()->php_log_file, '');
+			file_put_contents(Spry::config()->log_php_file, '');
 			header("Location: ".$_SERVER['PHP_SELF']);
 		}
 
