@@ -34,22 +34,22 @@ class SpryTools {
 	{
         if(empty(Spry::config()))
         {
-            return Spry::results(5001, null);
+            return Spry::response(5001, null);
         }
-		
+
 		if(empty(Spry::config()->db['username']) || empty(Spry::config()->db['database_name']))
         {
-            return Spry::results(5032, null);
+            return Spry::response(5032, null);
         }
 
         if(empty(Spry::config()->db['provider']) || !class_exists(Spry::config()->db['provider']))
         {
-            return Spry::results(5033, null);
+            return Spry::response(5033, null);
         }
 
 		$logs = Spry::db()->migrate($args);
 
-		return Spry::results(30, $logs);
+		return Spry::response(30, $logs);
 	}
 
     public static function test($test='')
@@ -67,7 +67,7 @@ class SpryTools {
         {
             if(!isset(Spry::config()->tests[$test]))
             {
-                return Spry::results(5053, null);
+                return Spry::response(5053, null);
             }
 
             $test = Spry::config()->tests[$test];
@@ -110,7 +110,7 @@ class SpryTools {
             }
 		}
 
-		return Spry::results($response_code, $result);
+		return Spry::response($response_code, $result);
 	}
 
     public function authenticateWebTools()
@@ -172,14 +172,14 @@ class SpryTools {
 			{
 				if(!empty($_POST['response_code']) && !empty($_POST['results']))
 				{
-					Spry::send_response(Spry::results($_POST['response_code'], $_POST['results']));
+					Spry::send_response(Spry::response($_POST['response_code'], $_POST['results']));
 					exit;
 				}
             }
 
             if($ajax === 'get_tests')
 			{
-                Spry::send_response(Spry::results(2000, Spry::config()->tests));
+                Spry::send_response(Spry::response(2000, Spry::config()->tests));
                 exit;
 			}
 
