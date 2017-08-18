@@ -2,7 +2,7 @@
 
 namespace Spry\SpryProvider;
 
-use Spry\Spry as Spry;
+use Spry\Spry;
 
 class SpryTools {
 
