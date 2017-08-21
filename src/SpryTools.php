@@ -75,6 +75,7 @@ class SpryTools {
 
 		$result = [
             'status' => 'Passed',
+            'params' => $test['params'],
             'expect' => [],
             'result' => [],
         ];
@@ -588,26 +589,18 @@ class SpryTools {
 
         function submit_test(route, params, t_id, expect, tests)
         {
-            submitted_tests['last_body'] = '';
-            submitted_tests['last_id'] = '';
+            submitted_tests['last_response'] = '';
 
             submitted_tests['completed'][t_id] = '';
 
             $.post(route, params, function(response){
                 if(response)
                 {
-                    if(typeof(response.body) !== 'undefined')
-                    {
-                        submitted_tests['last_body'] = response.body;
-
-                        if(typeof(response.body.id) !== 'undefined')
-                        {
-                            submitted_tests['last_id'] = response.body.id;
-                        }
-                    }
+                    submitted_tests['last_response'] = response;
 
                     var result = {
                         'status': 'Failed',
+                        'params': JSON.parse(params),
                         'expect': expect,
                         'result': {},
                         'full_response': response
@@ -637,7 +630,10 @@ class SpryTools {
 
         function track_submitted_tests(tests)
         {
-            var p, t_id, c;
+            var p, t_id, c, pv;
+            var param;
+            var param_value;
+            var path;
             var response_code = 2050;
 
             for(t_id in tests_data)
@@ -654,14 +650,27 @@ class SpryTools {
                         {
                             for(p in params)
                             {
-                                if(params[p] === '{last_response_body}')
-                                {
-                                    params[p] = submitted_tests['last_body'];
-                                }
+                                param = params[p].toString();
 
-                                if(params[p] === '{last_response_body_id}')
+                                if(submitted_tests['last_response'] && param.substr(0, 1) === '{' && param.substr(-1, 1) === '}')
                                 {
-                                    params[p] = submitted_tests['last_id'];
+                                    path = param.substr(1, (param.length - 2)).split('.');
+                                    param_value = submitted_tests['last_response'];
+
+                                    for(pv in path)
+                                    {
+                                        if(typeof(param_value[path[pv]]) !== 'undefined')
+                                        {
+                                            param_value = param_value[path[pv]];
+                                        }
+                                        else
+                                        {
+                                            param_value = null;
+                                            break;
+                                        }
+                                    }
+
+                                    params[p] = param_value;
                                 }
                             }
 
