@@ -54,17 +54,17 @@ class SpryTools {
 
     public static function test($test='')
 	{
-		if(empty(Spry::config()->tests))
-		{
-			Spry::stop(5052);
-		}
-
 		$response_code = 2050;
 
         $result = [];
 
         if(is_string($test))
         {
+            if(empty(Spry::config()->tests))
+    		{
+    			Spry::stop(5052);
+    		}
+            
             if(!isset(Spry::config()->tests[$test]))
             {
                 return Spry::response(5053, null);
