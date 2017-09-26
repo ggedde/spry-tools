@@ -6,6 +6,8 @@ use Spry\Spry;
 
 class SpryTools {
 
+
+
     public static function get_api_response($request='', $url='')
 	{
 		if(!empty($request))
@@ -25,10 +27,55 @@ class SpryTools {
 		}
 	}
 
-    public static function get_hash($value='')
+
+
+    /**
+	 * Creates a one way Hash value used for Passwords and other authentication.
+	 *
+ 	 * @param string $value
+ 	 *
+ 	 * @access 'public'
+ 	 * @return string
+	 */
+
+    public static function hash($value='')
     {
-        return Spry::hash($value);
+        $salt = '';
+
+		if(isset(Spry::config()->salt))
+		{
+			$salt = Spry::config()->salt;
+		}
+
+		return md5(serialize($value).$salt);
     }
+
+
+
+    /**
+     * Return a formatted alphnumeric safe version of the string.
+     *
+     * @param string $string
+     *
+     * @access 'public'
+     * @return string
+     */
+
+    public static function sanitize($string)
+    {
+        return preg_replace("/\W/", '', str_replace([' ', '-'], '_', strtolower(trim($string))));
+    }
+
+
+
+    /**
+	 * Migrates the Database Scheme based on the configuration.
+	 *
+ 	 * @param array $args
+ 	 *
+ 	 * @access 'public'
+ 	 * @return array
+	 */
 
     public static function db_migrate($args=[])
 	{
@@ -64,7 +111,7 @@ class SpryTools {
     		{
     			Spry::stop(5052);
     		}
-            
+
             if(!isset(Spry::config()->tests[$test]))
             {
                 return Spry::response(5053, null);
@@ -114,7 +161,7 @@ class SpryTools {
 		return Spry::response($response_code, $result);
 	}
 
-    public function authenticateWebTools()
+    public static function authenticateWebTools()
 	{
 		$enabled = !empty(Spry::config()->webtools_enabled);
 
@@ -150,13 +197,24 @@ class SpryTools {
 		return true;
 	}
 
-	public function displayWebTools()
-	{
-		if(!$this->authenticateWebTools())
+
+
+    public static function webTools()
+    {
+        if(!self::authenticateWebTools())
 		{
 			return;
 		}
 
+		$controller = Spry::get_controller('Spry\\SpryProvider\\SpryTools::displayWebTools');
+		Spry::get_response($controller);
+
+    }
+
+
+
+	public static function displayWebTools()
+	{
 		if(!empty($_POST['ajax']))
 		{
 			$ajax = $_POST['ajax'];
