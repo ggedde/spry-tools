@@ -161,7 +161,7 @@ class SpryTools {
 		return Spry::response($response_code, $result);
 	}
 
-    public static function authenticateWebTools()
+    private static function authenticateWebTools()
 	{
 		$enabled = !empty(Spry::config()->webtools_enabled);
 
@@ -206,14 +206,12 @@ class SpryTools {
 			return;
 		}
 
-		$controller = Spry::get_controller('Spry\\SpryProvider\\SpryTools::displayWebTools');
-		Spry::get_response($controller);
-
+        self::displayWebTools();
     }
 
 
 
-	public static function displayWebTools()
+	private static function displayWebTools()
 	{
 		if(!empty($_POST['ajax']))
 		{
