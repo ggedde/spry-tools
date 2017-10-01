@@ -967,7 +967,7 @@ class SpryTools {
 									<select id="api-request-test" onchange="update_json();">
                                         <option value="All Tests">All Tests</option>
 										<?php foreach (Spry::config()->tests as $test_id => $test) { ?>
-											<option value="<?php echo $test_id;?>"><?php echo $test_id.(!empty($test['title']) ? ' - '.$test['title'] : '');?></option>
+											<option value="<?php echo $test_id;?>"><?php echo $test_id.(!empty($test['label']) ? ' - '.$test['label'] : '');?></option>
 										<?php } ?>
 									</select>
 								</span>
