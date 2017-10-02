@@ -99,6 +99,32 @@ class SpryTools {
 		return Spry::response(30, $logs);
 	}
 
+
+
+    public static function extractKeyValue($key_path='', $array=[])
+    {
+        $path = explode('.', $key_path);
+
+        $param_value = $array;
+
+        foreach($path as $key)
+        {
+            if(isset($param_value[$key]))
+            {
+                $param_value = $param_value[$key];
+            }
+            else
+            {
+                $param_value = null;
+                break;
+            }
+        }
+
+        return $param_value;
+    }
+
+
+
     public static function test($test='')
 	{
 		$response_code = 2050;
@@ -145,15 +171,129 @@ class SpryTools {
             {
                 $result['expect'] = $test['expect'];
 
-				foreach ($test['expect'] as $expect_key => $expect)
+                foreach ($test['expect'] as $expect_key => $expect)
 				{
-					$result['result'][$expect_key] = $response[$expect_key];
+                    $expect_path = $expect_key;
+                    $expect_compare = '=';
 
-					if(empty($response[$expect_key]) || $response[$expect_key] !== $expect)
+                    $comparisons = ['<=','>=','=<','=>','<','>','!==','===','!=','==','!','='];
+
+                    foreach($comparisons as $compare_key => $compare_value)
+                    {
+                        if($pos = strrpos($expect_key, '['.$compare_value.']'))
+                        {
+                            $expect_path = rtrim(substr($expect_key, 0, $pos));
+                            $expect_compare = trim(str_replace(['[',']'], '', $compare_value));
+                            break;
+                        }
+                        else if($pos = strrpos($expect_key, $compare_value))
+                        {
+                            $expect_path = rtrim(substr($expect_key, 0, $pos));
+                            $expect_compare = trim($compare_value);
+                            break;
+                        }
+                    }
+
+                    $response_value = self::extractKeyValue($expect_path, $response);
+
+                    $result['result'][$expect_path] = $response_value;
+
+					if(is_null($response_value))
 					{
-						$result['status'] = 'Failed';
+                        $result['status'] = 'Failed';
 						$response_code = 5050;
 					}
+
+                    if($expect_compare && !is_null($response_value))
+                    {
+                        switch($expect_compare)
+                        {
+                            case '!==':
+
+                                if($response_value === $expect)
+                                {
+                                    $result['status'] = 'Failed';
+            						$response_code = 5050;
+                                }
+
+                            break;
+
+                            case '!=':
+                            case '!':
+
+                                if($response_value == $expect)
+                                {
+                                    $result['status'] = 'Failed';
+            						$response_code = 5050;
+                                }
+
+                            break;
+
+                            case '<=':
+                            case '=<':
+
+                                if($response_value > $expect)
+                                {
+                                    $result['status'] = 'Failed';
+            						$response_code = 5050;
+                                }
+
+                            break;
+
+                            case '>=':
+                            case '=>':
+
+                                if($response_value < $expect)
+                                {
+                                    $result['status'] = 'Failed';
+            						$response_code = 5050;
+                                }
+
+                            break;
+
+                            case '<':
+
+                                if($response_value >= $expect)
+                                {
+                                    $result['status'] = 'Failed';
+            						$response_code = 5050;
+                                }
+
+                            break;
+
+                            case '>':
+
+                                if($response_value <= $expect)
+                                {
+                                    $result['status'] = 'Failed';
+            						$response_code = 5050;
+                                }
+
+                            break;
+
+                            case '==':
+                            case '=':
+
+                                if($response_value != $expect)
+                                {
+                                    $result['status'] = 'Failed';
+            						$response_code = 5050;
+                                }
+
+                            break;
+
+                            case '===':
+                            default:
+
+                                if($response_value !== $expect)
+                                {
+                                    $result['status'] = 'Failed';
+            						$response_code = 5050;
+                                }
+
+                            break;
+                        }
+                    }
 				}
             }
 		}
@@ -229,7 +369,7 @@ class SpryTools {
 			{
 				if(!empty($_POST['response_code']) && !empty($_POST['results']))
 				{
-					Spry::send_response(Spry::response($_POST['response_code'], $_POST['results']));
+                    Spry::send_response(Spry::response($_POST['response_code'], json_decode($_POST['results'], true)));
 					exit;
 				}
             }
@@ -662,17 +802,153 @@ class SpryTools {
                         'full_response': response
                     };
 
+                    var expect_path,
+                        expect_key,
+                        expect_value,
+                        expect_compare,
+                        comparisons = ['<=','>=','=<','=>','<','>','!==','===','!=','==','!','='],
+                        compare_key,
+                        compare_value,
+                        pos,
+                        response_value,
+                        path,
+                        path_key;
+
                     if(typeof(expect) !== 'undefined' && !$.isEmptyObject(expect))
                     {
                         result['status'] = 'Passed';
 
-                        for(var e in expect)
+                        for(expect_key in expect)
                         {
-                            result['result'][e] = response[e];
+                            expect_value = expect[expect_key];
+                            expect_path = expect_key;
 
-                            if(response[e] !== expect[e])
+                            for(compare_key in comparisons)
                             {
+                                compare_value = comparisons[compare_key];
+                                expect_compare = '=';
+
+                                pos = expect_key.indexOf('['+compare_value+']');
+
+                                if(pos < 0)
+                                {
+                                    pos = expect_key.indexOf(compare_value);
+                                }
+
+                                if(pos > 0)
+                                {
+                                    expect_path = expect_key.substr(0, pos).trim();
+                                    expect_compare = compare_value.replace(/[\[\]']+/g,'').trim();
+                                    break;
+                                }
+                            }
+
+                            path = expect_path.split('.');
+                            response_value = response;
+
+                            for(path_key in path)
+                            {
+                                key = path[path_key];
+
+                                if(typeof(response_value[key]) !== 'undefined')
+                                {
+                                    response_value = response_value[key];
+                                }
+                                else
+                                {
+                                    response_value = null;
+                                    break;
+                                }
+                            }
+
+                            result['result'][expect_key] = response_value;
+
+        					if(response_value === null)
+        					{
                                 result['status'] = 'Failed';
+        					}
+
+                            if(expect_compare && response_value !== null)
+                            {
+                                switch(expect_compare)
+                                {
+                                    case '!==':
+
+                                        if(response_value === expect_value)
+                                        {
+                                            result['status'] = 'Failed';
+                                        }
+
+                                    break;
+
+                                    case '!=':
+                                    case '!':
+
+                                        if(response_value == expect_value)
+                                        {
+                                            result['status'] = 'Failed';
+                                        }
+
+                                    break;
+
+                                    case '<=':
+                                    case '=<':
+
+                                        if(response_value > expect_value)
+                                        {
+                                            result['status'] = 'Failed';
+                                        }
+
+                                    break;
+
+                                    case '>=':
+                                    case '=>':
+
+                                        if(response_value < expect_value)
+                                        {
+                                            result['status'] = 'Failed';
+                                        }
+
+                                    break;
+
+                                    case '<':
+
+                                        if(response_value >= expect_value)
+                                        {
+                                            result['status'] = 'Failed';
+                                        }
+
+                                    break;
+
+                                    case '>':
+
+                                        if(response_value <= expect_value)
+                                        {
+                                            result['status'] = 'Failed';
+                                        }
+
+                                    break;
+
+                                    case '==':
+                                    case '=':
+
+                                        if(response_value != expect_value)
+                                        {
+                                            result['status'] = 'Failed';
+                                        }
+
+                                    break;
+
+                                    case '===':
+                                    default:
+
+                                        if(response_value !== expect_value)
+                                        {
+                                            result['status'] = 'Failed';
+                                        }
+
+                                    break;
+                                }
                             }
                         }
                     }
@@ -737,8 +1013,6 @@ class SpryTools {
                 }
             }
 
-            // console.log(submitted_tests['completed']);
-
             for(c in submitted_tests['completed'])
             {
                 if(submitted_tests['completed'][c]['status'] !== 'Passed')
@@ -750,7 +1024,7 @@ class SpryTools {
             var data = {
                 ajax: 'build_tests_response',
                 'response_code': response_code,
-                'results': submitted_tests['completed']
+                'results': JSON.stringify(submitted_tests['completed'])
             };
 
             // Completed
