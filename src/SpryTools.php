@@ -1040,19 +1040,19 @@ class SpryTools {
             {
                 var data = JSON.parse(response);
 
-                if(typeof(data['response']) !== 'undefined')
+                if(typeof(data['status']) !== 'undefined')
                 {
-                    if(data['response'] === 'success')
+                    if(data['status'] === 'success')
                     {
                         $('#api-request-legend').append('<span class="status success">Success</span>');
                     }
 
-                    if(data['response'] === 'error')
+                    if(data['status'] === 'error')
                     {
                         $('#api-request-legend').append('<span class="status error">Error</span>');
                     }
 
-                    if(data['response'] === 'unknown')
+                    if(data['status'] === 'unknown')
                     {
                         $('#api-request-legend').append('<span class="status unknown">Unknown</span>');
                     }
@@ -1156,19 +1156,19 @@ class SpryTools {
 						{
 							var data = JSON.parse(response);
 
-							if(typeof(data['response']) !== 'undefined')
+							if(typeof(data['status']) !== 'undefined')
 							{
-								if(data['response'] === 'success')
+								if(data['status'] === 'success')
 								{
 									$('#db-migrate-container legend').append('<span class="status success">Success</span>');
 								}
 
-								if(data['response'] === 'error')
+								if(data['status'] === 'error')
 								{
 									$('#db-migrate-container legend').append('<span class="status error">Error</span>');
 								}
 
-								if(data['response'] === 'unknown')
+								if(data['status'] === 'unknown')
 								{
 									$('#db-migrate-container legend').append('<span class="status unknown">Unknown</span>');
 								}
