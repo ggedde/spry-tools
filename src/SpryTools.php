@@ -361,7 +361,7 @@ class SpryTools {
 			{
 				if(!empty($_POST['hash']))
 				{
-					die(self::get_hash($_POST['hash']));
+					die(self::hash($_POST['hash']));
 				}
 			}
 
