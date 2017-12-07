@@ -3,6 +3,7 @@
 namespace Spry\SpryProvider;
 
 use Spry\Spry;
+use Spry\SpryUtilities;
 
 class SpryWebTools {
 
@@ -66,7 +67,7 @@ class SpryWebTools {
 			{
 				if(!empty($_POST['hash']))
 				{
-					die(self::hash($_POST['hash']));
+					die(SpryUtilities::hash($_POST['hash']));
 				}
 			}
 
@@ -89,7 +90,7 @@ class SpryWebTools {
 			{
 				$destructive = !empty($_POST['destructive']) ? true : false;
 				$dryrun = !empty($_POST['dryrun']) ? true : false;
-				$results = self::db_migrate(['destructive' => $destructive, 'dryrun' => $dryrun]);
+				$results = SpryUtilities::db_migrate(['destructive' => $destructive, 'dryrun' => $dryrun]);
 				Spry::send_response($results);
 				exit;
 			}
