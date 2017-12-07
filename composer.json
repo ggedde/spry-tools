@@ -1,5 +1,5 @@
 {
-    "name": "ggedde/spry-tools",
+    "name": "ggedde/spry-webtools",
     "description": "Provider for Spry",
     "type": "SpryProvider",
     "require": {

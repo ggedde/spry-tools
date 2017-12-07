@@ -1,2 +1,2 @@
-# spry-tools
-Tools for Spry Cli and WebTools
+# spry-webtools
+Web interface for Spry
