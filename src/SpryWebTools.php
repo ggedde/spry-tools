@@ -90,7 +90,7 @@ class SpryWebTools {
 			{
 				$destructive = !empty($_POST['destructive']) ? true : false;
 				$dryrun = !empty($_POST['dryrun']) ? true : false;
-				$results = SpryUtilities::db_migrate(['destructive' => $destructive, 'dryrun' => $dryrun]);
+				$results = SpryUtilities::dbMigrate(['destructive' => $destructive, 'dryrun' => $dryrun]);
 				Spry::send_response($results);
 				exit;
 			}
