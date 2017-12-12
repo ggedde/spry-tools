@@ -88,9 +88,9 @@ class SpryWebTools {
 
 			if($ajax === 'db_migrate')
 			{
-				$destructive = !empty($_POST['destructive']) ? true : false;
+				$force = !empty($_POST['force']) ? true : false;
 				$dryrun = !empty($_POST['dryrun']) ? true : false;
-				$results = SpryUtilities::dbMigrate(['destructive' => $destructive, 'dryrun' => $dryrun]);
+				$results = SpryUtilities::dbMigrate(['force' => $force, 'dryrun' => $dryrun]);
 				Spry::send_response($results);
 				exit;
 			}
@@ -847,7 +847,7 @@ class SpryWebTools {
 
 				if(!$('#dryrun').is(":checked"))
 				{
-					confirmed = confirm('Are you sure you want to Run DB Migrate'+($('#destructive').is(":checked") ? ' with Destructive turned ON' : '')+'?');
+					confirmed = confirm('Are you sure you want to Run DB Migrate'+($('#force').is(":checked") ? ' with Force Destructive turned ON' : '')+'?');
 				}
 
 				if(confirmed)
@@ -856,7 +856,7 @@ class SpryWebTools {
 					$('#db-migrate-container legend').append('<span class="loader" style="display:none"></span>');
 					$('#db-migrate-container textarea').val('');
 					$('#db-migrate-container legend .loader').fadeIn(100);
-					$.post('<?php echo $_SERVER['REQUEST_URI'];?>', { ajax: 'db_migrate', destructive: ($('#destructive').is(":checked") ? 1 : 0), dryrun: ($('#dryrun').is(":checked") ? 1 : 0) }, function(response){
+					$.post('<?php echo $_SERVER['REQUEST_URI'];?>', { ajax: 'db_migrate', force: ($('#force').is(":checked") ? 1 : 0), dryrun: ($('#dryrun').is(":checked") ? 1 : 0) }, function(response){
 
 						if(response && response.indexOf('{') > -1)
 						{
@@ -1016,8 +1016,8 @@ class SpryWebTools {
 					<div class="content">
 						<div class="migrate-controls">
 
-							<label title="Destructive will drop tables and columns that are not listed in your Migrate Schema. Which will result in Lost Data.">
-								<input type="checkbox" id="destructive" value="1">Destructive
+							<label title="Force will drop tables and columns that are not listed in your Migrate Schema. Which will result in Lost Data.">
+								<input type="checkbox" id="force" value="1">Force Destructive
 							</label>
 							<label title="Dryrun will only report back what the migrate will do, but not make any actual changes.">
 								<input type="checkbox" id="dryrun" value="1" checked="checked">Dryrun
