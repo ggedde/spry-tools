@@ -712,6 +712,9 @@ class SpryWebTools {
                                 }
                             }
 
+							// Add Test Data Parameter
+							params['test_data'] = 1;
+
                             submit_test(route, JSON.stringify(params), t_id, expect, tests);
                             return;
                         }
