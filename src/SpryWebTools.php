@@ -491,6 +491,7 @@ class SpryWebTools {
 
         function submit_test(route, params, t_id, expect, tests)
         {
+            submitted_tests['last_last_response'] = '';
             submitted_tests['last_response'] = '';
 
             submitted_tests['completed'][t_id] = '';
@@ -498,6 +499,7 @@ class SpryWebTools {
             $.post(route, params, function(response){
                 if(response)
                 {
+                    submitted_tests['last_last_response'] = submitted_tests['last_response'];
                     submitted_tests['last_response'] = response;
 
                     var result = {
@@ -690,7 +692,27 @@ class SpryWebTools {
                             {
                                 param = params[p].toString();
 
-                                if(submitted_tests['last_response'] && param.substr(0, 1) === '{' && param.substr(-1, 1) === '}')
+                                if(submitted_tests['last_last_response'] && param.substr(0, 2) === '{{' && param.substr(-2, 2) === '}}')
+                                {
+                                    path = param.substr(2, (param.length - 4)).split('.');
+                                    param_value = submitted_tests['last_last_response'];
+
+                                    for(pv in path)
+                                    {
+                                        if(typeof(param_value[path[pv]]) !== 'undefined')
+                                        {
+                                            param_value = param_value[path[pv]];
+                                        }
+                                        else
+                                        {
+                                            param_value = null;
+                                            break;
+                                        }
+                                    }
+
+                                    params[p] = param_value;
+                                }
+								else if(submitted_tests['last_response'] && param.substr(0, 1) === '{' && param.substr(-1, 1) === '}')
                                 {
                                     path = param.substr(1, (param.length - 2)).split('.');
                                     param_value = submitted_tests['last_response'];
