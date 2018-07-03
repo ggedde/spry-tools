@@ -447,6 +447,19 @@ class SpryWebTools {
             'last_body': ''
         };
 
+		function to_object(arr)
+		{
+			if(typeof arr !== 'array' && typeof arr !== 'object')
+			{
+				return arr;
+			}
+
+			var rv = {};
+			for (var i = 0; i < arr.length; ++i)
+			if (arr[i] !== undefined) rv[i] = arr[i];
+			return rv;
+		}
+
 		function update_json()
 		{
             if(typeof(tests_data[$('#api-request-test').val()]) !== 'undefined')
@@ -683,7 +696,7 @@ class SpryWebTools {
                     if(typeof(submitted_tests['completed'][t_id]) === 'undefined')
                     {
                         var route = '<?php echo Spry::config()->endpoint;?>' + tests_data[t_id]['route'];
-                        var params = tests_data[t_id]['params'];
+                        var params = to_object(tests_data[t_id]['params']);
                         var expect = tests_data[t_id]['expect'];
 
                         if(typeof(expect) === 'object')
