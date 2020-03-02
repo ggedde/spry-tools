@@ -383,7 +383,6 @@ class SpryWebTools
             list-style: none;
             text-align: left;
             padding: 0;
-            height:
         }
 
         .tabs li {
@@ -1858,8 +1857,7 @@ class SpryWebTools
 
         function update_logs($type) {
             if ($type == 'php' || $type == 'all') {
-                $.post('<?php echo $_SERVER['
-                    REQUEST_URI ']; ?>', {
+                $.post('<?php echo $_SERVER['REQUEST_URI']; ?>', {
                         ajax: 'php_logs'
                     },
                     function(response) {
@@ -1871,8 +1869,7 @@ class SpryWebTools
             }
 
             if ($type == 'api' || $type == 'all') {
-                $.post('<?php echo $_SERVER['
-                    REQUEST_URI ']; ?>', {
+                $.post('<?php echo $_SERVER['REQUEST_URI']; ?>', {
                         ajax: 'api_logs'
                     },
                     function(response) {
@@ -2119,8 +2116,7 @@ class SpryWebTools
             };
 
             // Completed
-            $.post('<?php echo $_SERVER['
-                REQUEST_URI ']; ?>', data,
+            $.post('<?php echo $_SERVER['REQUEST_URI']; ?>', data,
                 function(response) {
                     update_test_response(response);
                 });
@@ -2180,8 +2176,7 @@ class SpryWebTools
             });
 
             $('#hash-input').on('keyup change', function() {
-                $.post('<?php echo $_SERVER['
-                    REQUEST_URI ']; ?>', {
+                $.post('<?php echo $_SERVER['REQUEST_URI']; ?>', {
                         ajax: 'hash',
                         hash: $(this).val()
                     },
@@ -2198,8 +2193,7 @@ class SpryWebTools
 
                 submitted_tests['completed'] = {};
 
-                $.post('<?php echo $_SERVER['
-                    REQUEST_URI ']; ?>', {
+                $.post('<?php echo $_SERVER['REQUEST_URI']; ?>', {
                         ajax: 'get_tests'
                     },
                     function(response) {
@@ -2233,8 +2227,7 @@ class SpryWebTools
                     $('#db-migrate-container legend').append('<span class="loader" style="display:none"></span>');
                     $('#db-migrate-container textarea').val('');
                     $('#db-migrate-container legend .loader').fadeIn(100);
-                    $.post('<?php echo $_SERVER['
-                        REQUEST_URI ']; ?>', {
+                    $.post('<?php echo $_SERVER['REQUEST_URI']; ?>', {
                             ajax: 'db_migrate',
                             force: ($('#force').is(":checked") ? 1 : 0),
                             dryrun: ($('#dryrun').is(":checked") ? 1 : 0)
@@ -2277,8 +2270,7 @@ class SpryWebTools
 
             $('.clear-php-logs').on('click', function() {
                 if (confirm('Are you Sure?')) {
-                    $.post('<?php echo $_SERVER['
-                        REQUEST_URI ']; ?>', {
+                    $.post('<?php echo $_SERVER['REQUEST_URI']; ?>', {
                             ajax: 'clear_php_logs'
                         },
                         function(response) {
@@ -2289,8 +2281,7 @@ class SpryWebTools
 
             $('.clear-api-logs').on('click', function() {
                 if (confirm('Are you Sure?')) {
-                    $.post('<?php echo $_SERVER['
-                        REQUEST_URI ']; ?>', {
+                    $.post('<?php echo $_SERVER['REQUEST_URI']; ?>', {
                             ajax: 'clear_api_logs'
                         },
                         function(response) {
