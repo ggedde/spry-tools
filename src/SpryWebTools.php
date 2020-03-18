@@ -2124,27 +2124,24 @@ class SpryWebTools
         }
 
         function update_test_response(response) {
-            if (response && response.indexOf('{') > -1) {
+            if ((typeof response === 'string' || response instanceof String) && response && response.indexOf('{') > -1) {
                 var data = JSON.parse(response);
+            }
 
-                if (typeof(data['status']) !== 'undefined') {
-                    if (data['status'] === 'success') {
-                        $('#api-request-legend').append('<span class="status success">Success</span>');
-                    }
-
-                    if (data['status'] === 'error') {
-                        $('#api-request-legend').append('<span class="status error">Error</span>');
-                    }
-
-                    if (data['status'] === 'unknown') {
-                        $('#api-request-legend').append('<span class="status unknown">Unknown</span>');
-                    }
-
-                    $('#api-request-response textarea').val(JSON.stringify(JSON.parse(response), null, "\t"));
-                } else {
-                    $('#api-request-legend').append('<span class="status unknown">Unknown</span>');
-                    $('#api-request-response textarea').val(response);
+            if (typeof(data['status']) !== 'undefined') {
+                if (data['status'] === 'success') {
+                    $('#api-request-legend').append('<span class="status success">Success</span>');
                 }
+
+                if (data['status'] === 'error') {
+                    $('#api-request-legend').append('<span class="status error">Error</span>');
+                }
+
+                if (data['status'] === 'unknown') {
+                    $('#api-request-legend').append('<span class="status unknown">Unknown</span>');
+                }
+
+                $('#api-request-response textarea').val(JSON.stringify(JSON.parse(response), null, "\t"));
             } else {
                 $('#api-request-legend').append('<span class="status unknown">Unknown</span>');
                 $('#api-request-response textarea').val(response);
@@ -2234,27 +2231,24 @@ class SpryWebTools
                         },
                         function(response) {
 
-                            if (response && response.indexOf('{') > -1) {
+                            if ((typeof response === 'string' || response instanceof String) && response && response.indexOf('{') > -1) {
                                 var data = JSON.parse(response);
+                            }
 
-                                if (typeof(data['status']) !== 'undefined') {
-                                    if (data['status'] === 'success') {
-                                        $('#db-migrate-container legend').append('<span class="status success">Success</span>');
-                                    }
-
-                                    if (data['status'] === 'error') {
-                                        $('#db-migrate-container legend').append('<span class="status error">Error</span>');
-                                    }
-
-                                    if (data['status'] === 'unknown') {
-                                        $('#db-migrate-container legend').append('<span class="status unknown">Unknown</span>');
-                                    }
-
-                                    $('#db-migrate-container textarea').val(JSON.stringify(JSON.parse(response), null, "\t"));
-                                } else {
-                                    $('#db-migrate-container legend').append('<span class="status unknown">Unknown</span>');
-                                    $('#db-migrate-container textarea').val(response);
+                            if (typeof(data['status']) !== 'undefined') {
+                                if (data['status'] === 'success') {
+                                    $('#db-migrate-container legend').append('<span class="status success">Success</span>');
                                 }
+
+                                if (data['status'] === 'error') {
+                                    $('#db-migrate-container legend').append('<span class="status error">Error</span>');
+                                }
+
+                                if (data['status'] === 'unknown') {
+                                    $('#db-migrate-container legend').append('<span class="status unknown">Unknown</span>');
+                                }
+
+                                $('#db-migrate-container textarea').val(JSON.stringify(JSON.parse(response), null, "\t"));
                             } else {
                                 $('#db-migrate-container legend').append('<span class="status unknown">Unknown</span>');
                                 $('#db-migrate-container textarea').val(response);
