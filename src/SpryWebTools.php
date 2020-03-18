@@ -2123,9 +2123,9 @@ class SpryWebTools
 
         }
 
-        function update_test_response(response) {
-            if ((typeof response === 'string' || response instanceof String) && response && response.indexOf('{') > -1) {
-                var data = JSON.parse(response);
+        function update_test_response(data) {
+            if ((typeof data === 'string' || data instanceof String) && data && data.indexOf('{') > -1) {
+                data = JSON.parse(data);
             }
 
             if (typeof(data['status']) !== 'undefined') {
@@ -2141,10 +2141,10 @@ class SpryWebTools
                     $('#api-request-legend').append('<span class="status unknown">Unknown</span>');
                 }
 
-                $('#api-request-response textarea').val(JSON.stringify(JSON.parse(response), null, "\t"));
+                $('#api-request-response textarea').val(JSON.stringify(data, null, "\t"));
             } else {
                 $('#api-request-legend').append('<span class="status unknown">Unknown</span>');
-                $('#api-request-response textarea').val(response);
+                $('#api-request-response textarea').val(data);
             }
 
             $('#api-request-legend .loader').remove();
@@ -2229,10 +2229,10 @@ class SpryWebTools
                             force: ($('#force').is(":checked") ? 1 : 0),
                             dryrun: ($('#dryrun').is(":checked") ? 1 : 0)
                         },
-                        function(response) {
+                        function(data) {
 
-                            if ((typeof response === 'string' || response instanceof String) && response && response.indexOf('{') > -1) {
-                                var data = JSON.parse(response);
+                            if ((typeof data === 'string' || data instanceof String) && data && data.indexOf('{') > -1) {
+                                data = JSON.parse(data);
                             }
 
                             if (typeof(data['status']) !== 'undefined') {
@@ -2248,10 +2248,10 @@ class SpryWebTools
                                     $('#db-migrate-container legend').append('<span class="status unknown">Unknown</span>');
                                 }
 
-                                $('#db-migrate-container textarea').val(JSON.stringify(JSON.parse(response), null, "\t"));
+                                $('#db-migrate-container textarea').val(JSON.stringify(data, null, "\t"));
                             } else {
                                 $('#db-migrate-container legend').append('<span class="status unknown">Unknown</span>');
-                                $('#db-migrate-container textarea').val(response);
+                                $('#db-migrate-container textarea').val(data);
                             }
 
                             $('#db-migrate-container legend .loader').remove();
