@@ -88,13 +88,13 @@ class SpryWebTools
 
                 case 'build_tests_response':
                     if (!empty($_POST['response_code']) && !empty($_POST['results'])) {
-                        Spry::sendResponse(Spry::response($_POST['response_code'], json_decode($_POST['results'], true)));
+                        Spry::sendResponse(Spry::response(json_decode($_POST['results'], true)));
                         exit;
                     }
                     break;
 
                 case 'get_tests':
-                    Spry::sendResponse(Spry::response(2000, Spry::config()->tests));
+                    Spry::sendResponse(Spry::response(Spry::config()->tests));
                     exit;
 
                     break;
